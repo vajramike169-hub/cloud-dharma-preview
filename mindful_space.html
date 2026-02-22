@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindful Space</title>
+    <style>
+        /* Basic styling for a calm interface */
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; margin: 0; }
+        .container { text-align: center; }
+        #visitor-count { font-size: 5rem; font-weight: bold; color: #2E7D32; }
+        p { font-size: 1.2rem; color: #555; }
+        .breathing-guide { display: none; }
+        .breathing-circle { width: 100px; height: 100px; border-radius: 50%; background-color: #66bb6a; transition: transform 2s ease-in-out; margin: 20px auto; }
+        #breathing-text { font-size: 1.5rem; color: #1B5E20; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>Visitors currently in the Mindful Space:</p>
+        <div id="visitor-count">...</div>
+        <hr style="margin: 20px 0;">
+        <div id="breathing-guide" class="breathing-guide">
+            <div id="breathing-circle" class="breathing-circle"></div>
+            <p id="breathing-text">Ready?</p>
+        </div>
+        <button id="start-breathing">Start 4-7-8 Breathing</button>
+    </div>
+    <script>
+        const socket = new WebSocket('ws://localhost:8080');
+        const visitorCountEl = document.getElementById('visitor-count');
+        const startBtn = document.getElementById('start-breathing');
+        const guideEl = document.getElementById('breathing-guide');
+        const circleEl = document.getElementById('breathing-circle');
+        const textEl = document.getElementById('breathing-text');
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'update') {
+                visitorCountEl.textContent = data.count;
+            }
+        };
+
+        socket.onopen = () => console.log('Connected to the Mindful Space.');
+        socket.onclose = () => visitorCountEl.textContent = '...';
+
+        startBtn.onclick = () => {
+            guideEl.style.display = 'block';
+            startBtn.style.display = 'none';
+            runBreathingCycle();
+        };
+
+        function runBreathingCycle() {
+            setTextAndScale('Breathe In (4s)', 1.5);
+            setTimeout(() => {
+                setTextAndScale('Hold (7s)', 1.5);
+                setTimeout(() => {
+                    setTextAndScale('Breathe Out (8s)', 1);
+                    setTimeout(runBreathingCycle, 8000); // Loop
+                }, 7000);
+            }, 4000);
+        }
+
+        function setTextAndScale(text, scale) {
+            textEl.textContent = text;
+            circleEl.style.transform = `scale(${scale})`;
+        }
+    </script>
+</body>
+</html>

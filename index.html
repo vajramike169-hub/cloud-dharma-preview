@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the Cloud Dharma Center</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .auth-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2 { color: #2E7D32; margin-bottom: 1.5rem; }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 1rem;
+        }
+        button:hover { background-color: #1B5E20; }
+        .message { margin-top: 1rem; font-size: 0.9rem; }
+        .error { color: #d32f2f; }
+        .success { color: #2E7D32; }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+    <h2>Join the Mandala</h2>
+    <form id="signupForm">
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email Address" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Sign Up</button>
+    </form>
+    <div id="message" class="message"></div>
+</div>
+
+<script>
+    // The link to our live Cloud Run API
+    const API_URL = "https://auth-api-415177747722.asia-east1.run.app";
+
+    const form = document.getElementById('signupForm');
+    const messageEl = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        messageEl.textContent = "Connecting to the cloud...";
+        messageEl.className = "message";
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch(`${API_URL}/api/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                messageEl.textContent = "Welcome, " + data.name + "! Your seat is saved.";
+                messageEl.className = "message success";
+                form.reset();
+                // Optional: Redirect to login or dashboard
+                // window.location.href = "/login.html";
+            } else {
+                messageEl.textContent = "Error: " + (data.error || "Could not register.");
+                messageEl.className = "message error";
+            }
+        } catch (err) {
+            console.error(err);
+            messageEl.textContent = "Connection failed. Is the API awake?";
+            messageEl.className = "message error";
+        }
+    });
+</script>
+
+</body>
+</html>
