@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inner Space | Cloud Dharma Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <div class="logo">
+            <span>🕉️</span> Cloud Dharma Center
+        </div>
+        <div class="user-menu">
+            <span id="userName">Practitioner</span>
+            <button onclick="logout()" class="btn-outline" style="margin-left: 10px; padding: 8px 16px;">Log Out</button>
+        </div>
+    </header>
+
+    <div class="grid">
+        <!-- Daily Prescription -->
+        <div class="card featured" style="grid-column: 1 / -1;">
+            <h3>🏔️ Daily Prescription</h3>
+            <p style="font-size: 1.1rem; color: #444;">
+                "Do not alter your mind. Do not spoil it with corrections. Just leave it as it is—fresh, natural, and loose."
+            </p>
+            <p style="text-align: right; font-style: italic; color: #888;">— Adzom Drukpa</p>
+        </div>
+
+        <!-- Vital Signs -->
+        <div class="card">
+            <h3>❤️ Vital Signs</h3>
+            <div style="font-size: 2rem; font-weight: bold; color: var(--success-color);">
+                108 <span style="font-size: 1rem; color: #666;">Merit Seeds</span>
+            </div>
+            <p>Your practice is growing.</p>
+            <button class="btn" style="width: 100%;">Plant a Seed</button>
+        </div>
+
+        <!-- Mindful Space -->
+        <div class="card">
+            <h3>🧘 Mindful Space</h3>
+            <p>Enter the Digital Mind Clinic for shared silence and breathing practice.</p>
+            <div style="margin: 20px 0; display: flex; gap: 10px; align-items: center;">
+                <span style="height: 10px; width: 10px; background: #2E7D32; border-radius: 50%; display: inline-block;"></span>
+                <strong>12 Visitors</strong> currently sitting.
+            </div>
+            <a href="mindful_space.html" class="btn">Enter Silence</a>
+        </div>
+
+        <!-- Medicine Cabinet -->
+        <div class="card">
+            <h3>📚 Medicine Cabinet</h3>
+            <ul style="padding-left: 20px; color: #555;">
+                <li style="margin-bottom: 8px;">Ngöndro Practice Text</li>
+                <li style="margin-bottom: 8px;">The Words of My Perfect Teacher</li>
+                <li>Seven Points of Mind Training</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Check if logged in
+    const token = localStorage.getItem('dharma_token');
+    const userStr = localStorage.getItem('dharma_user');
+
+    if (!token) {
+        window.location.href = "login.html";
+    } else if (userStr) {
+        const user = JSON.parse(userStr);
+        document.getElementById('userName').textContent = user.name;
+    }
+
+    function logout() {
+        localStorage.removeItem('dharma_token');
+        localStorage.removeItem('dharma_user');
+        window.location.href = "login.html";
+    }
+</script>
+
+</body>
+</html>

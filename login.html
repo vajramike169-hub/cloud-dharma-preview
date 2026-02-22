@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter the Mandala | Cloud Dharma Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .logo-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+    </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+    <div class="card login-card">
+        <span class="logo-icon">🕉️</span>
+        <h2>Cloud Dharma Center</h2>
+        <p style="color: #666; margin-bottom: 2rem;">Digital Mind Clinic & Sangha</p>
+        
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email Address" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" class="btn" style="width: 100%;">Resume Practice</button>
+        </form>
+        
+        <p style="margin-top: 20px; font-size: 0.9rem;">
+            New here? <a href="index.html" style="color: var(--primary-color);">Create an account</a>
+        </p>
+        <div id="message" style="margin-top: 10px;"></div>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://auth-api-415177747722.asia-east1.run.app";
+    const form = document.getElementById('loginForm');
+    const messageEl = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        messageEl.textContent = "Connecting...";
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch(`${API_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Save the "Key" (Token)
+                localStorage.setItem('dharma_token', data.token);
+                localStorage.setItem('dharma_user', JSON.stringify(data.user));
+                messageEl.style.color = 'green';
+                messageEl.textContent = "Welcome back. Entering the Dashboard...";
+                setTimeout(() => window.location.href = "dashboard.html", 1000);
+            } else {
+                messageEl.style.color = 'red';
+                messageEl.textContent = data.error || "Login failed.";
+            }
+        } catch (err) {
+            messageEl.textContent = "Connection failed.";
+        }
+    });
+</script>
+
+</body>
+</html>
