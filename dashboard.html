@@ -6,6 +6,7 @@
     <title>Inner Space | Cloud Dharma Center</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="animations.css">
 </head>
 <body>
 
@@ -88,9 +89,14 @@
             current = current - 1;
             countEl.textContent = current;
             
+            // Add pulse animation
+            countEl.classList.remove('pulse-text'); // Reset
+            void countEl.offsetWidth; // Trigger reflow
+            countEl.classList.add('pulse-text');
+
             // Visual feedback
             if (current === 0) {
-                alert("Joyous! You have completed a round of 108.");
+                setTimeout(() => alert("Joyous! You have completed a round of 108."), 100);
                 countEl.textContent = 108; // Reset
             }
         }
