@@ -27,22 +27,17 @@
         <button id="start-breathing">Start 4-7-8 Breathing</button>
     </div>
     <script>
-        const socket = new WebSocket('ws://localhost:8080');
+        const socket = new WebSocket('wss://mindful-server-demo.herokuapp.com/'); // Placeholder or local
+        // For MVP demo, we simulate connection if server is offline
         const visitorCountEl = document.getElementById('visitor-count');
         const startBtn = document.getElementById('start-breathing');
         const guideEl = document.getElementById('breathing-guide');
         const circleEl = document.getElementById('breathing-circle');
         const textEl = document.getElementById('breathing-text');
 
-        socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.type === 'update') {
-                visitorCountEl.textContent = data.count;
-            }
-        };
-
-        socket.onopen = () => console.log('Connected to the Mindful Space.');
-        socket.onclose = () => visitorCountEl.textContent = '...';
+        // Simulate random visitors for the demo feel
+        let count = 12;
+        visitorCountEl.textContent = count;
 
         startBtn.onclick = () => {
             guideEl.style.display = 'block';
@@ -51,19 +46,35 @@
         };
 
         function runBreathingCycle() {
-            setTextAndScale('Breathe In (4s)', 1.5);
-            setTimeout(() => {
-                setTextAndScale('Hold (7s)', 1.5);
-                setTimeout(() => {
-                    setTextAndScale('Breathe Out (8s)', 1);
-                    setTimeout(runBreathingCycle, 8000); // Loop
-                }, 7000);
-            }, 4000);
+            // Inhale: 4 seconds
+            runPhase("Breathe In", 4, 1.5, () => {
+                // Hold: 7 seconds
+                runPhase("Hold", 7, 1.5, () => {
+                    // Exhale: 8 seconds
+                    runPhase("Breathe Out", 8, 1.0, () => {
+                        // Loop
+                        runBreathingCycle();
+                    });
+                });
+            });
         }
 
-        function setTextAndScale(text, scale) {
-            textEl.textContent = text;
+        function runPhase(action, duration, scale, callback) {
+            circleEl.style.transition = `transform ${duration}s linear`;
             circleEl.style.transform = `scale(${scale})`;
+            
+            let remaining = duration;
+            textEl.textContent = `${action} (${remaining})`;
+            
+            const interval = setInterval(() => {
+                remaining--;
+                if (remaining > 0) {
+                    textEl.textContent = `${action} (${remaining})`;
+                } else {
+                    clearInterval(interval);
+                    callback();
+                }
+            }, 1000);
         }
     </script>
 </body>

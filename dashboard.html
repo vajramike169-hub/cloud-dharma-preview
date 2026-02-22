@@ -32,12 +32,12 @@
 
         <!-- Vital Signs -->
         <div class="card">
-            <h3>❤️ Vital Signs</h3>
+            <h3>📿 Mala Counter</h3>
             <div style="font-size: 2rem; font-weight: bold; color: var(--success-color);">
-                108 <span style="font-size: 1rem; color: #666;">Merit Seeds</span>
+                <span id="meritCount">108</span> <span style="font-size: 1rem; color: #666;">Beads Remaining</span>
             </div>
-            <p>Your practice is growing.</p>
-            <button class="btn" style="width: 100%;">Plant a Seed</button>
+            <p>Recite a mantra or perform a virtuous act.</p>
+            <button onclick="plantSeed()" class="btn" style="width: 100%;">Move One Bead</button>
         </div>
 
         <!-- Mindful Space -->
@@ -79,6 +79,21 @@
         localStorage.removeItem('dharma_token');
         localStorage.removeItem('dharma_user');
         window.location.href = "login.html";
+    }
+
+    function plantSeed() {
+        const countEl = document.getElementById('meritCount');
+        let current = parseInt(countEl.textContent);
+        if (current > 0) {
+            current = current - 1;
+            countEl.textContent = current;
+            
+            // Visual feedback
+            if (current === 0) {
+                alert("Joyous! You have completed a round of 108.");
+                countEl.textContent = 108; // Reset
+            }
+        }
     }
 </script>
 
