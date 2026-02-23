@@ -25,10 +25,11 @@
         <!-- Daily Prescription -->
         <div class="card featured" style="grid-column: 1 / -1;">
             <h3>🏔️ Daily Prescription</h3>
-            <p style="font-size: 1.1rem; color: #444;">
-                "Do not alter your mind. Do not spoil it with corrections. Just leave it as it is—fresh, natural, and loose."
+            <p id="quoteContent" style="font-size: 1.1rem; color: #444; font-style: italic;">
+                Listening to the lineage...
             </p>
-            <p style="text-align: right; font-style: italic; color: #888;">— Adzom Drukpa</p>
+            <p id="quoteAuthor" style="text-align: right; font-weight: bold; color: #888;">— Loading</p>
+            <p id="quoteSource" style="text-align: right; font-size: 0.8rem; color: #aaa;"></p>
         </div>
 
         <!-- Mala Counter -->
@@ -86,12 +87,30 @@
     } else if (userStr) {
         const user = JSON.parse(userStr);
         document.getElementById('userName').textContent = user.name;
+        fetchDailyWisdom();
     }
 
     function logout() {
         localStorage.removeItem('dharma_token');
         localStorage.removeItem('dharma_user');
         window.location.href = "login.html";
+    }
+
+    async function fetchDailyWisdom() {
+        const API_URL = "https://auth-api-415177747722.asia-east1.run.app";
+        try {
+            const res = await fetch(`${API_URL}/api/wisdom/daily`);
+            const data = await res.json();
+            
+            if (data.content) {
+                document.getElementById('quoteContent').textContent = `"${data.content}"`;
+                document.getElementById('quoteAuthor').textContent = `— ${data.author}`;
+                document.getElementById('quoteSource').textContent = data.source ? `(${data.source})` : '';
+            }
+        } catch (err) {
+            console.error("Wisdom fetch failed", err);
+            document.getElementById('quoteContent').textContent = "Quiet mind. (Could not fetch new wisdom)";
+        }
     }
 
     function plantSeed() {
